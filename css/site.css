@@ -370,6 +370,71 @@ span.cite{color:var(--ink-faint);cursor:default}
 }
 .svc-list .role a:hover{color:var(--seal);border-bottom-color:var(--seal)}
 
+/* ---------- scrollable news ---------- */
+/* Caps the News block at five entries; anything beyond that scrolls inside the
+   box instead of lengthening the page. One row is the .96rem type at the 1.65
+   body line-height plus the .35rem the tight list pads above and below. */
+.news-box{
+  --news-row:2.29rem;
+  display:flex;
+  align-items:stretch;
+  gap:.7rem;
+}
+.news-scroll{
+  flex:1;
+  min-width:0;
+  max-height:calc(var(--news-row) * 5);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  /* the bottom edge fades out to signal there is more below */
+  -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 2.2rem),transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 calc(100% - 2.2rem),transparent 100%);
+}
+/* no fade once the reader has reached the end of the list */
+.news-scroll.at-end{-webkit-mask-image:none;mask-image:none}
+.news-scroll:focus-visible{
+  outline:1px solid var(--rule);
+  outline-offset:.6rem;
+}
+/* The arrows carry the affordance, so the scrollbar itself is hidden. The box
+   still scrolls by wheel, trackpad, touch and keyboard. */
+.news-scroll{scrollbar-width:none}
+.news-scroll::-webkit-scrollbar{display:none}
+/* the mask would otherwise clip the last row's descenders */
+.news-scroll .svc-list li:last-child{padding-bottom:1.6rem}
+
+/* Up/down buttons, built by news.js so a reader without scripts still gets a
+   plain scrollable list rather than two dead controls. */
+.news-nav{
+  flex:none;
+  /* the flex display below would otherwise beat the hidden attribute */
+  display:flex;
+  flex-direction:column;
+  /* the column stretches to the height of the list, so this parks one arrow
+     against the rule under the heading and the other at the foot of the box */
+  justify-content:space-between;
+  align-items:center;
+}
+.news-nav[hidden]{display:none}
+.news-nav button{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:1.5rem;
+  height:1.5rem;
+  background:none;
+  border:0;
+  color:var(--ink-faint);
+  cursor:pointer;
+  transition:color .2s,opacity .2s;
+}
+/* pulled up into the gap the heading leaves, so it sits closer to the rule */
+.news-nav button:first-child{margin-top:-.75rem}
+.news-nav button svg{width:.9rem;height:.9rem}
+.news-nav button:hover:not(:disabled){color:var(--seal)}
+.news-nav button:focus-visible{outline:1px solid var(--rule);outline-offset:2px}
+.news-nav button:disabled{opacity:.25;cursor:default}
+
 /* ---------- CV ---------- */
 .cv-actions{display:flex;gap:.9rem;flex-wrap:wrap;margin-bottom:2.8rem}
 .btn{
@@ -476,4 +541,7 @@ a.reach:hover svg,a.reach:focus-visible svg{animation:envelope-shake-hover .5s e
   .colophon{gap:.35rem}
   /* long organisation names should break rather than push the page sideways */
   .svc-list .role,.pub h3{overflow-wrap:anywhere}
+  /* entries wrap onto two lines at this width, so the row allowance grows to
+     keep the same five entries in view */
+  .news-box{--news-row:3.9rem;gap:.5rem}
 }
